@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  graphqlapi:
+    image: ${DOCKER_REGISTRY-}graphqlapi
+    build:
+      context: .
+      dockerfile: GraphQLApi/Dockerfile
