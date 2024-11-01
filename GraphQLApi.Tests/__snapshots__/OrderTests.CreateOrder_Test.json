@@ -1,0 +1,20 @@
+{
+  "data": {
+    "createOrder": {
+      "order": {
+        "id": 1,
+        "orderDate": "2024-11-01T11:29:39.205Z",
+        "pizzaDetails": {
+          "type": "HAWAIIAN",
+          "size": "MEDIUM",
+          "toppings": [
+            "Pineapple",
+            "Sausage",
+            "Spinach"
+          ]
+        },
+        "status": "PREPARING"
+      }
+    }
+  }
+}

@@ -1,0 +1,265 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+interface Error {
+  message: String!
+}
+
+type CreateOrderPayload {
+  order: Order
+}
+
+type Customer {
+  orders(where: OrderFilterInput @cost(weight: "10")): [Order!]! @cost(weight: "10")
+  id: Int!
+  name: String!
+  phone: String!
+  address: String!
+}
+
+type DeleteOrderPayload {
+  orderDeletePayload: OrderDeletePayload
+}
+
+type Mutation {
+  createOrder(input: CreateOrderInput!): CreateOrderPayload! @cost(weight: "10")
+  updateOrder(input: UpdateOrderInput!): UpdateOrderPayload! @cost(weight: "10")
+  updateOrderStatus(input: UpdateOrderStatusInput!): UpdateOrderStatusPayload! @cost(weight: "10")
+  deleteOrder(input: DeleteOrderInput!): DeleteOrderPayload! @cost(weight: "10")
+}
+
+type Order {
+  customer: Customer @cost(weight: "10")
+  id: Int!
+  customerId: Int!
+  pizzaDetails: PizzaDetails!
+  orderDate: DateTime!
+  status: OrderStatus!
+}
+
+type OrderDeletePayload {
+  orderId: Int!
+  successfull: Boolean!
+}
+
+type OrderNotFoundError implements Error {
+  message: String!
+}
+
+type PizzaDetails {
+  type: PizzaType!
+  size: PizzaSize!
+  toppings: [String!]!
+}
+
+type Query {
+  customers(where: CustomerFilterInput @cost(weight: "10")): [Customer!]! @cost(weight: "10")
+  orders(where: OrderFilterInput @cost(weight: "10")): [Order!]! @cost(weight: "10")
+}
+
+type Subscription {
+  onOrderCreated: Order! @cost(weight: "10")
+  onOrderUpdated: Order! @cost(weight: "10")
+  onOrderDeleted: OrderDeletePayload! @cost(weight: "10")
+}
+
+type UpdateOrderPayload {
+  order: Order
+  errors: [UpdateOrderError!]
+}
+
+type UpdateOrderStatusPayload {
+  order: Order
+}
+
+union UpdateOrderError = OrderNotFoundError
+
+input CreateOrderInput {
+  customer: CustomerInput!
+  pizza: PizzaDetailsInput!
+}
+
+input CustomerFilterInput {
+  and: [CustomerFilterInput!]
+  or: [CustomerFilterInput!]
+  id: IntOperationFilterInput
+  name: StringOperationFilterInput
+  phone: StringOperationFilterInput
+  address: StringOperationFilterInput
+  orders: ListFilterInputTypeOfOrderFilterInput
+}
+
+input CustomerInput {
+  name: String!
+  phone: String!
+  address: String!
+}
+
+input DateTimeOperationFilterInput {
+  eq: DateTime @cost(weight: "10")
+  neq: DateTime @cost(weight: "10")
+  in: [DateTime] @cost(weight: "10")
+  nin: [DateTime] @cost(weight: "10")
+  gt: DateTime @cost(weight: "10")
+  ngt: DateTime @cost(weight: "10")
+  gte: DateTime @cost(weight: "10")
+  ngte: DateTime @cost(weight: "10")
+  lt: DateTime @cost(weight: "10")
+  nlt: DateTime @cost(weight: "10")
+  lte: DateTime @cost(weight: "10")
+  nlte: DateTime @cost(weight: "10")
+}
+
+input DeleteOrderInput {
+  orderId: Int!
+}
+
+input IntOperationFilterInput {
+  eq: Int @cost(weight: "10")
+  neq: Int @cost(weight: "10")
+  in: [Int] @cost(weight: "10")
+  nin: [Int] @cost(weight: "10")
+  gt: Int @cost(weight: "10")
+  ngt: Int @cost(weight: "10")
+  gte: Int @cost(weight: "10")
+  ngte: Int @cost(weight: "10")
+  lt: Int @cost(weight: "10")
+  nlt: Int @cost(weight: "10")
+  lte: Int @cost(weight: "10")
+  nlte: Int @cost(weight: "10")
+}
+
+input ListFilterInputTypeOfOrderFilterInput {
+  all: OrderFilterInput @cost(weight: "10")
+  none: OrderFilterInput @cost(weight: "10")
+  some: OrderFilterInput @cost(weight: "10")
+  any: Boolean @cost(weight: "10")
+}
+
+input ListStringOperationFilterInput {
+  all: StringOperationFilterInput @cost(weight: "10")
+  none: StringOperationFilterInput @cost(weight: "10")
+  some: StringOperationFilterInput @cost(weight: "10")
+  any: Boolean @cost(weight: "10")
+}
+
+input OrderFilterInput {
+  and: [OrderFilterInput!]
+  or: [OrderFilterInput!]
+  id: IntOperationFilterInput
+  customer: CustomerFilterInput
+  customerId: IntOperationFilterInput
+  pizzaDetails: PizzaDetailsFilterInput
+  orderDate: DateTimeOperationFilterInput
+  status: OrderStatusOperationFilterInput
+}
+
+input OrderStatusOperationFilterInput {
+  eq: OrderStatus @cost(weight: "10")
+  neq: OrderStatus @cost(weight: "10")
+  in: [OrderStatus!] @cost(weight: "10")
+  nin: [OrderStatus!] @cost(weight: "10")
+}
+
+input PizzaDetailsFilterInput {
+  and: [PizzaDetailsFilterInput!]
+  or: [PizzaDetailsFilterInput!]
+  type: PizzaTypeOperationFilterInput
+  size: PizzaSizeOperationFilterInput
+  toppings: ListStringOperationFilterInput
+}
+
+input PizzaDetailsInput {
+  type: PizzaType!
+  size: PizzaSize!
+  toppings: [ToppingEnum!]!
+}
+
+input PizzaSizeOperationFilterInput {
+  eq: PizzaSize @cost(weight: "10")
+  neq: PizzaSize @cost(weight: "10")
+  in: [PizzaSize!] @cost(weight: "10")
+  nin: [PizzaSize!] @cost(weight: "10")
+}
+
+input PizzaTypeOperationFilterInput {
+  eq: PizzaType @cost(weight: "10")
+  neq: PizzaType @cost(weight: "10")
+  in: [PizzaType!] @cost(weight: "10")
+  nin: [PizzaType!] @cost(weight: "10")
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String @cost(weight: "10")
+  neq: String @cost(weight: "10")
+  contains: String @cost(weight: "20")
+  ncontains: String @cost(weight: "20")
+  in: [String] @cost(weight: "10")
+  nin: [String] @cost(weight: "10")
+  startsWith: String @cost(weight: "20")
+  nstartsWith: String @cost(weight: "20")
+  endsWith: String @cost(weight: "20")
+  nendsWith: String @cost(weight: "20")
+}
+
+input UpdateOrderInput {
+  orderId: Int!
+  newStatus: OrderStatus!
+  pizzaDetails: PizzaDetailsInput!
+}
+
+input UpdateOrderStatusInput {
+  orderId: Int!
+  status: OrderStatus!
+}
+
+enum OrderStatus {
+  PREPARING
+  BAKED
+  DELIVERED
+  CANCELLED
+}
+
+enum PizzaSize {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum PizzaType {
+  MARGHERITA
+  PEPPERONI
+  HAWAIIAN
+  VEGGIE
+  BBQ_CHICKEN
+  MEAT_LOVERS
+  FOUR_CHEESE
+  SUPREME
+}
+
+enum ToppingEnum {
+  CHEESE
+  PEPPERONI
+  MUSHROOMS
+  ONIONS
+  SAUSAGE
+  BACON
+  BLACK_OLIVES
+  GREEN_PEPPERS
+  PINEAPPLE
+  SPINACH
+}
+
+"The purpose of the `cost` directive is to define a `weight` for GraphQL types, fields, and arguments. Static analysis can use these weights when calculating the overall cost of a query or response."
+directive @cost("The `weight` argument defines what value to add to the overall cost for every appearance, or possible appearance, of a type, field, argument, etc." weight: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | ENUM | INPUT_FIELD_DEFINITION
+
+"The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."
+directive @specifiedBy("The specifiedBy URL points to a human-readable specification. This field will only read a result for scalar types." url: String!) on SCALAR
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")

@@ -1,0 +1,40 @@
+{
+  "errors": [
+    {
+      "message": "The specified value type of field `newStatus` does not match the field type.",
+      "locations": [
+        {
+          "line": 5,
+          "column": 18
+        }
+      ],
+      "path": [
+        "updateOrder"
+      ],
+      "extensions": {
+        "fieldName": "newStatus",
+        "fieldType": "OrderStatus!",
+        "locationType": "OrderStatus!",
+        "specifiedBy": "https://spec.graphql.org/October2021/#sec-Values-of-Correct-Type"
+      }
+    },
+    {
+      "message": "The specified value type of field `toppings` does not match the field type.",
+      "locations": [
+        {
+          "line": 9,
+          "column": 19
+        }
+      ],
+      "path": [
+        "updateOrder"
+      ],
+      "extensions": {
+        "fieldName": "toppings",
+        "fieldType": "[ToppingEnum!]!",
+        "locationType": "[ToppingEnum!]!",
+        "specifiedBy": "https://spec.graphql.org/October2021/#sec-Values-of-Correct-Type"
+      }
+    }
+  ]
+}
