@@ -8,9 +8,17 @@ namespace PizzaOrders.GraphQLApi.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    public static IServiceCollection AddApplicationServices(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
-        services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(@"./keys"));
+        var keysPath = configuration["DataProtection:KeysPath"];
+
+        services
+            .AddDataProtection()
+            .PersistKeysToFileSystem(new DirectoryInfo(keysPath))
+            .SetApplicationName("MyApp");
         services.AddScoped<IEncryptionService, DataProtectionEncryptionService>();
 
         return services;
