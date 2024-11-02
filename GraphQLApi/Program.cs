@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddDatabaseConfiguration(builder.Configuration);
-builder.Services.AddGraphQLConfiguration();
+builder.Services.AddGraphQLConfiguration(builder.Environment);
 
 var app = builder.Build();
 

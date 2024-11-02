@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
         services
             .AddDataProtection()
             .PersistKeysToFileSystem(new DirectoryInfo(keysPath))
-            .SetApplicationName("MyApp");
+            .SetApplicationName("PizzaOrdersApp");
         services.AddScoped<IEncryptionService, DataProtectionEncryptionService>();
 
         return services;
@@ -39,13 +39,30 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddGraphQLConfiguration(this IServiceCollection services)
+    public static IServiceCollection AddGraphQLConfiguration(this IServiceCollection services, IWebHostEnvironment env)
     {
+        var redisHost = Environment.GetEnvironmentVariable("REDIS_HOST");
+        var redisPort = Environment.GetEnvironmentVariable("REDIS_PORT");
+        var redisPassword = Environment.GetEnvironmentVariable("REDIS_PASSWORD");
+
+        var configurationOptions = new ConfigurationOptions
+        {
+            EndPoints = { $"{redisHost}:{redisPort}" },
+            AbortOnConnectFail = false,
+            Ssl = false
+        };
+
+        if (env.IsProduction())
+        {
+            configurationOptions.Password = redisPassword;
+            configurationOptions.Ssl = true;
+        }
+
         services
             .AddGraphQLServer()
             .AddMutationConventions(applyToAllMutations: true)
             .AddFiltering()
-            .AddRedisSubscriptions(_ => ConnectionMultiplexer.Connect("redis:6379"))
+            .AddRedisSubscriptions(_ => ConnectionMultiplexer.Connect(configurationOptions))
             .AddTypes();
 
         return services;

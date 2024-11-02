@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using HotChocolate.Subscriptions;
+﻿using HotChocolate.Subscriptions;
 using Microsoft.EntityFrameworkCore;
 using PizzaOrders.GraphQLApi.Data;
 using PizzaOrders.GraphQLApi.Models;
@@ -12,12 +10,12 @@ namespace PizzaOrders.GraphQLApi.GraphQL.Orders;
 public static class OrderMutations
 {
     public static async Task<Order> CreateOrder(
-    CreateOrderInput input,
-    ApplicationDbContext context,
-    ITopicEventSender eventSender,
-    IEncryptionService encryptionService,
-    CancellationToken cancellationToken
-)
+        CreateOrderInput input,
+        ApplicationDbContext context,
+        IEncryptionService encryptionService,
+        ITopicEventSender eventSender,
+        CancellationToken cancellationToken
+    )
     {
         var customerInput = input.Customer;
         var pizzaInput = input.Pizza;
@@ -26,9 +24,8 @@ public static class OrderMutations
 
         try
         {
-            var encryptedName = encryptionService.Encrypt(customerInput.Name);
             var customer = await context.Customers.FirstOrDefaultAsync(
-                c => c.Name == encryptedName,
+                c => c.Name == customerInput.Name,
                 cancellationToken
             );
 
@@ -36,15 +33,15 @@ public static class OrderMutations
             {
                 customer = new Customer
                 {
-                    Name = encryptedName,
-                    Phone = encryptionService.Encrypt(customerInput.Phone),
-                    Address = encryptionService.Encrypt(customerInput.Address)
+                    Name = customerInput.Name,
+                    Phone = customerInput.Phone,
+                    Address = customerInput.Address
                 };
             }
             else
             {
-                customer.Phone = encryptionService.Encrypt(customerInput.Phone);
-                customer.Address = encryptionService.Encrypt(customerInput.Address);
+                customer.Phone = customerInput.Phone;
+                customer.Address = customerInput.Address;
             }
 
             var toppingNames = pizzaInput.Toppings.Select(t => t.ToString()).ToList();
@@ -80,10 +77,11 @@ public static class OrderMutations
         catch (Exception ex)
         {
             await transaction.RollbackAsync(cancellationToken);
-            throw new Exception("Error creating order: " + ex.InnerException?.Message ?? ex.Message);
+            throw new Exception(
+                "Error creating order: " + ex.InnerException?.Message ?? ex.Message
+            );
         }
     }
-
 
     [Error<OrderNotFoundException>]
     public static async Task<Order> UpdateOrder(

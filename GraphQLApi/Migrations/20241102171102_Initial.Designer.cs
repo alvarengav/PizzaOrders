@@ -12,7 +12,7 @@ using PizzaOrders.GraphQLApi.Data;
 namespace PizzaOrders.GraphQLApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241101055122_Initial")]
+    [Migration("20241102171102_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
